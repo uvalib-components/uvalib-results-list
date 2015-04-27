@@ -1,4 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-list/core-list.html">
+<link rel="import" href="../core-toolbar/core-toolbar.html">
+<link rel="import" href="../polymer-filters/polymer-filters.html">
+<link rel="import" href="../uvalib-catalog/uvalib-catalog.html">
 
 <!--
 Element providing solution to no problem in particular.
@@ -12,11 +16,27 @@ Element providing solution to no problem in particular.
 @status alpha
 @homepage http://uvalib-components.github.io/uvalib-results-list
 -->
-<polymer-element name="uvalib-results-list" attributes="author fancy">
+<polymer-element name="uvalib-results-list" attributes="library query items selectedItem" fit vertical layout>
   <template>
     <link rel="stylesheet" href="uvalib-results-list.css">
-    <h1>Hello from uvalib-results-list</h1>
-    <content></content>
+
+    <uvalib-catalog id="catalog" auto append availability items="{{items}}" facets="{{facets}}" count="{{count}}" query="{{query}}" page="{{page}}" per_page="20" sort_order="{{sort}}" facet_limits="{{facet_limits}}" facet_limits_inc="{{facet_limits_inc}}" more="{{more}}" on-uvalib-catalog-fetched-results="{{fetched}}"></uvalib-catalog>   
+
+    <core-list on-scroll="{{listScroll}}" id="list" data={{items}} height="110" selection={{selectedItem}} flex>   
+      <template>
+        <div class="item {{ {selected: selected} | tokenList }}">
+          <div class="message" style="background-image: url('{{model['cover_image_url']}}');">
+            <span class="title">{{model['title'][0]| truncate(50, true)}}</span>
+            <div class="format">{{model['format'][0]}}</div>
+            <div class="author">{{model['author'][0]| truncate(40, true)}}</div>
+            <div class="date">{{model['published_date'][0]}}</div>
+            <!--<div class="call">{{model['call_number_display'][0]}}</div>-->
+            <!--<div class="location">{{model['location_facet'][0]}}</div>-->
+          </div>
+        </div>
+      </template>
+    </core-list>
+<!--    <core-toolbar></core-toolbar> -->
   </template>
   <script>
     Polymer({
@@ -73,6 +93,56 @@ Element providing solution to no problem in particular.
        */
       fireLasers: function () {
         this.fire('uvalib-results-list-lasers-success', { sound: 'Pew pew pew!' });
+      },
+
+      query:null,
+      fetchingMore:false,
+      more:null,
+      page:1,
+
+      makeFacetLimits: function(){
+        this.facet_limits_inc = {
+          library: this.library,
+          format: [
+            "Visual Materials","Video Quadraplex","Video Other","VHS","Thesis/Dissertation",
+            "Physical Object","Periodical","Other Media","Newspaper","Musical Score",
+            "Mixed Materials","Microform","Map","Manuscript","LP","Looseleaf","Large Print",
+            "Journal/Magazine","Government Document","Globe","Filmstrip","Film","Equipment",
+            "DVD","Computer Resource","Computer Media","CD","Broadside","Braille","Book",
+            "Blu-Ray","Atlas","Archive"
+          ]
+//          format: [
+//            "Visual Materials","Video U-Matic","Video Quadraplex","Video Other",
+//            "Video EIAJ","VHS","Thesis/Dissertation","Technical report","Tape Reel",
+//            "Physical Object","Photographs","Photograph","Periodical","Other Media",
+//            "Newspaper","Musical Score","Mixed Materials","Microform","Map","Manuscript",
+//            "Looseleaf","Laserdisc","Large Print","LP","Kit","Journal/Magazine",
+//            "Government Document","Globe","Filmstrip","Film","Equipment","Document","DVD",
+//            "Cylinder","Conference Paper","Computer Resource","Computer Media","Coin",
+//            "Cassette","Cartridge","CD","Broadside","Braille","Book","Blu-Ray","Atlas",
+//            "Article","Archive","Anchor Script","Alderman"
+//          ]
+        };
+      },
+      ready: function(){
+        this.makeFacetLimits();
+      },
+      libraryChanged: function(){
+        this.makeFacetLimits();
+      },
+      listScroll: function(){
+            console.log('scrolling!');
+            if (!this.fetchingMore && 
+                this.$.list.scrollTop >= this.$.list._viewportSize - 1000 &&
+                this.more) {
+              this.fetchingMore=true;
+              console.log('end of page');
+              this.page=this.page+1;
+            }
+      },
+      fetched: function(){
+        this.$.list.updateSize();
+        this.fetchingMore=false;
       }
     });
   </script>
