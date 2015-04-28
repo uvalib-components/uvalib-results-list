@@ -4,6 +4,7 @@
 <link rel="import" href="../polymer-filters/polymer-filters.html">
 <link rel="import" href="../uvalib-catalog/uvalib-catalog.html">
 
+
 <!--
 Element providing solution to no problem in particular.
 
@@ -20,17 +21,18 @@ Element providing solution to no problem in particular.
   <template>
     <link rel="stylesheet" href="uvalib-results-list.css">
 
-    <uvalib-catalog id="catalog" auto append availability items="{{items}}" facets="{{facets}}" count="{{count}}" query="{{query}}" page="{{page}}" per_page="20" sort_order="{{sort}}" facet_limits="{{facet_limits}}" facet_limits_inc="{{facet_limits_inc}}" more="{{more}}" on-uvalib-catalog-fetched-results="{{fetched}}"></uvalib-catalog>   
+    <uvalib-catalog id="catalog" auto append availability directions items="{{items}}" facets="{{facets}}" count="{{count}}" query="{{query}}" page="{{page}}" per_page="20" sort_order="{{sort}}" facet_limits="{{facet_limits}}" facet_limits_inc="{{facet_limits_inc}}" more="{{more}}" on-uvalib-catalog-fetched-results="{{fetched}}"></uvalib-catalog>   
 
-    <core-list on-scroll="{{listScroll}}" id="list" data={{items}} height="110" selection={{selectedItem}} flex>   
+    <core-list on-scroll="{{listScroll}}" id="list" data={{items}} height="130" selection={{selectedItem}} flex>   
       <template>
-        <div class="item {{ {selected: selected} | tokenList }}">
+        <div class="item {{ {selected: selected} | tokenList }} {{model['available']?'available':'out'}}">
           <div class="message" style="background-image: url('{{model['cover_image_url']}}');">
             <span class="title">{{model['title'][0]| truncate(50, true)}}</span>
-            <div class="format">{{model['format'][0]}}</div>
-            <div class="author">{{model['author'][0]| truncate(40, true)}}</div>
-            <div class="date">{{model['published_date'][0]}}</div>
-            <!--<div class="call">{{model['call_number_display'][0]}}</div>-->
+            <span class="subtitle">{{model.subtitle[0]}}</span>
+            <div class="format"><strong>Format:</strong> {{model['format'][0]}}</div>
+            <div class="author"><strong>Author:</strong> {{model['author'][0]| truncate(40, true)}}</div>
+            <div class="date"><strong>Publication Date:</strong> {{model['published_date'][0]}}</div>
+            <div class="call"><strong>Call Number:</strong> <span style="opacity:1; font-size:1.3em;">{{model.copy.call_number}}</span></div>
             <!--<div class="location">{{model['location_facet'][0]}}</div>-->
           </div>
         </div>
@@ -40,60 +42,6 @@ Element providing solution to no problem in particular.
   </template>
   <script>
     Polymer({
-      /**
-       * The `author` attribute sets an initial author
-       *
-       * @attribute author
-       * @type string
-       * @default 'Dimitri Glazkov'
-       */
-      author: 'Dimitri Glazkov',
-
-      /**
-       * `fancy` is a property that does something fancy.
-       *
-       * @property fancy
-       * @type bool
-       * @default false
-       */
-      fancy: false,
-
-      ready: function () {
-        // Ready is a lifecycle callback.
-        // You can do setup work in here.
-        // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
-      },
-
-      /**
-       * The `sayHello` method will return a greeting.
-       *
-       * @method sayHello
-       * @param {String} greeting Pass in a specific greeting.
-       * @return {String} Returns a string greeting.
-       */
-      sayHello: function (greeting) {
-        var response = greeting || 'Hello World!';
-        return 'uvalib-results-list says, ' + response;
-      },
-
-      /**
-       * The `uvalib-results-list-lasers-success` event is fired whenever we
-       * call fireLasers.
-       *
-       * @event uvalib-results-list-lasers-success
-       * @param {Object} detail
-       *   @param {string} detail.sound An amazing sound.
-       */
-
-      /**
-       * The `fireLasers` method will fire the lasers. At least
-       * it will dispatch an event that claims lasers were fired :)
-       *
-       * @method fireLasers
-       */
-      fireLasers: function () {
-        this.fire('uvalib-results-list-lasers-success', { sound: 'Pew pew pew!' });
-      },
 
       query:null,
       fetchingMore:false,
@@ -141,9 +89,11 @@ Element providing solution to no problem in particular.
             }
       },
       fetched: function(){
+        this.$.catalog.parseAvailbility(this.library);
         this.$.list.updateSize();
         this.fetchingMore=false;
       }
+
     });
   </script>
 </polymer-element>
