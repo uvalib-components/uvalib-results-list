@@ -23,7 +23,7 @@ Element providing solution to no problem in particular.
 
     <uvalib-catalog id="catalog" auto append availability directions items="{{items}}" facets="{{facets}}" count="{{count}}" query="{{query}}" page="{{page}}" per_page="20" sort_order="{{sort}}" facet_limits="{{facet_limits}}" facet_limits_inc="{{facet_limits_inc}}" more="{{more}}" on-uvalib-catalog-fetched-results="{{fetched}}"></uvalib-catalog>   
 
-    <core-list on-scroll="{{listScroll}}" id="list" data={{items}} height="130" selection={{selectedItem}} flex>   
+    <core-list on-scroll="{{listScroll}}" id="list" data={{items}} height="150" selection={{selectedItem}} flex>   
       <template>
         <div class="item {{ {selected: selected} | tokenList }} {{model['available']?'available':'out'}}">
           <div class="message" style="background-image: url('{{model['cover_image_url']}}');">
