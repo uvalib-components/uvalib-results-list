@@ -64,13 +64,10 @@
       margin: 10px;
     }
 
-    .selection-display {
-      background: lightgray;
-      padding: 0 5px;
-      margin: 0 5px;
+    .out.selected {
+      background: inherit;
     }
 
-    .out {
-      background-color: red;
-      color: white;
+    .item.out .message{
+      opacity: 0.5;
     }
