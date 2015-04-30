@@ -32,7 +32,7 @@ Element providing solution to no problem in particular.
             <div class="format"><strong>Format:</strong> {{model['format'][0]}}</div>
             <div class="author"><strong>Author:</strong> {{model['author'][0]| truncate(40, true)}}</div>
             <div class="date"><strong>Publication Date:</strong> {{model['published_date'][0]}}</div>
-            <div class="call"><strong>Call Number:</strong> <span style="opacity:1; font-size:1.3em;">{{model.copy.call_number}}</span></div>
+            <div class="call"><strong>Call Number:</strong> <span style="opacity:1; font-size:1.3em;">{{model.copy.call_number}}{{!model.available? "Unavailable":""}}</span></div>
             <!--<div class="location">{{model['location_facet'][0]}}</div>-->
           </div>
         </div>
